@@ -13,11 +13,10 @@ import java.util.List;
  * @author san
  */
 public interface ServerInterface extends Remote{
-     String getprin();
      List<table> getAllTable();
      int addTable(table tbl);
      int editTable(table tbl);
-     int delTable(table tbl);
+     int delTable(String tableName);
      table getTable(String tableName);
      
      List<Item> getAllItem();
@@ -25,7 +24,10 @@ public interface ServerInterface extends Remote{
      int editItem(Item itm);
      int delItem(Item itm);
      
-     
+     List<OrderList> getAllOrder();
+     int addOrder(OrderList odr);
+     int editOrder(OrderList odr);
+     int delOrder(OrderList odr);
      
     
 }
