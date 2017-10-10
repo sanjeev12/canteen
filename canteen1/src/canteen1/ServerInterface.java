@@ -22,12 +22,14 @@ public interface ServerInterface extends Remote{
      List<Item> getAllItem();
      int addItem(Item itm);
      int editItem(Item itm);
-     int delItem(Item itm);
+     int delItem(String itmName);
+     Item getItem(String itmName);
      
      List<OrderList> getAllOrder();
      int addOrder(OrderList odr);
      int editOrder(OrderList odr);
-     int delOrder(OrderList odr);
+     int delOrder(String tableName);
+     OrderList getOrderList(String tableName);
      
     
 }

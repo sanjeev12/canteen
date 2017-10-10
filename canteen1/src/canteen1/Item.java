@@ -1,24 +1,31 @@
 package canteen1;
+
 public class Item {
 
     private String itmName, itmCode;
-    private int itmRate, itmQuantity;
+    private int itmRate,id;
 
     Item() {
     }
 
-    Item(String itmCode, String itmName, int itmRate, int itmQuantity) {
+    Item(String itmCode, String itmName, int itmRate) {
         this.itmCode = itmCode;
         this.itmName = itmName;
         this.itmRate = itmRate;
-        this.itmQuantity = itmQuantity;
+    }
+    
+    void setItem(String itmCode, String itmName, int itmRate) {
+        this.itmCode = itmCode;
+        this.itmName = itmName;
+        this.itmRate = itmRate;
     }
 
-    void setItem(String itmCode, String itmName, int itmRate, int itmQuantity) {
-        this.itmCode = itmCode;
-        this.itmName = itmName;
-        this.itmRate = itmRate;
-        this.itmQuantity = itmQuantity;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     String getItemCode() {
@@ -33,26 +40,17 @@ public class Item {
         return itmRate;
     }
 
-    int getItemQuantity() {
-        return itmQuantity;
-    }
-}
-
-
-//class order list 
- class OrderList extends Item {
-    private String tableName;
- OrderList(){};
-
-    public OrderList(String tableName,String itemName,String itemCode,int rate,int itemQuantity){
-        this.tableName=tableName;
-        super.setItem(itemCode, itemName, rate, itemQuantity);
+    public void setItemCode(String itmCode) {
+        this.itmCode = itmCode;
     }
 
-    public String getTableName() {
-        return tableName;
+    public void setItemName(String itmName) {
+        this.itmName = itmName;
+    }
+
+    public void setItemRate(int itmRate) {
+        this.itmRate = itmRate;
     }
     
-            
- 
+
 }

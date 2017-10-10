@@ -9,16 +9,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import javax.swing.JOptionPane;
-
-/**
- *
- * @author san
- */
-public class Server implements ServerInterface {
+public class Server implements ServerInterface 
+{
 
     List<table> tblList;
     table tbl;
+    Item itm;
+    List<Item> itmList;
+    OrderList odr;
+    List<OrderList> odrList;
 
     @Override
     public List<table> getAllTable() {
@@ -99,16 +98,16 @@ public class Server implements ServerInterface {
 
     @Override
     public table getTable(String tableName) {
-        tbl=null;
+        tbl = null;
         try {
             DBConnection dbc = new DBConnection();
             PreparedStatement pstmt = dbc.conn.prepareStatement("select * from tableinfo where TableName =?");
             pstmt.setString(1, tableName);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                tbl.setTable(rs.getString(3),rs.getString(4),Integer.parseInt(rs.getString(2)));
+                tbl.setTable(rs.getString(3), rs.getString(4), Integer.parseInt(rs.getString(2)));
                 tbl.setTblId(Integer.parseInt(rs.getString(1)));
-                }
+            }
             return tbl;
 
         } catch (NumberFormatException | SQLException ex) {
@@ -119,32 +118,104 @@ public class Server implements ServerInterface {
 
     @Override
     public List<Item> getAllItem() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        itm = null;
+        itmList.clear();
+        try {
+            DBConnection dbc = new DBConnection();
+            PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderitemlist");
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                itm.setItem(rs.getString(1), rs.getString(2), rs.getInt(3));
+                itm.setId(rs.getInt(1));
+                itmList.add(itm);
+            }
+            return itmList;
+
+        } catch (SQLException ex) {
+            System.out.println("error on loadorderlist");
+            return null;
+        }
     }
 
     @Override
     public int addItem(Item itm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            DBConnection dbc = new DBConnection();
+            PreparedStatement pstmt = dbc.conn.prepareStatement("Insert into orderitemlist values (null,?,?,?)");
+            pstmt.setString(1, itm.getItemCode());
+            pstmt.setString(2, itm.getItemName());
+            pstmt.setInt(3, itm.getItemRate());
+
+            int rs = pstmt.executeUpdate();
+            System.out.println("Adding if item Successful");
+            return 1;
+
+        } catch (SQLException ex) {
+            System.out.println("error on add" + ex);
+            return 0;
+        }
     }
 
     @Override
     public int editItem(Item itm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            DBConnection dbc = new DBConnection();
+            PreparedStatement pstmt = dbc.conn.prepareStatement("Update orderitemlist set Rate=?, Name =?,Code=? where Id=? ");
+            pstmt.setInt(1, itm.getItemRate());
+            pstmt.setString(2, itm.getItemName());
+            pstmt.setString(3, itm.getItemCode());
+            pstmt.setInt(4, itm.getId());
+            int rs = pstmt.executeUpdate();
+            System.out.println("successfully updated item" + rs);
+            return 1;
+
+        } catch (SQLException ex) {
+            System.out.println("error on loadorderlist" + ex);
+            return 0;
+        }
     }
 
     @Override
     public int delItem(Item itm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            DBConnection dbc = new DBConnection();
+
+            PreparedStatement pstmt = dbc.conn.prepareStatement("delete from orderitemlist where Name =?");
+            pstmt.setString(1, txttable.getText());
+            int i = pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("error on del" + e);
+        }
+    }
+
+    @Override
+    public Item getItem(String itmName) {
+        try {
+            DBConnection dbc = new DBConnection();
+            PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderitemlist where Name =?");
+            pstmt.setString(1, itmName);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                itm.setItem(rs.getString(2), rs.getString(3), rs.getInt(4));
+                itm.setId(1);
+            }
+            return itm;
+
+        } catch (Exception ex) {
+            System.out.println("error on loadorderlist");
+            return null;
+        }
     }
 
     @Override
     public List<OrderList> getAllOrder() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
     }
 
     @Override
     public int addOrder(OrderList odr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
     }
 
     @Override
@@ -154,6 +225,21 @@ public class Server implements ServerInterface {
 
     @Override
     public int delOrder(OrderList odr) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public OrderList getOrderList(String tableName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int delItem(String itmName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int delOrder(String tableName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
