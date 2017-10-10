@@ -20,6 +20,10 @@ public interface ServerInterface extends Remote{
      int delTable(table tbl);
      table getTable(String tableName);
      
+     List<Item> getAllItem();
+     int addItem(Item itm);
+     int editItem(Item itm);
+     int delItem(Item itm);
      
      
      
