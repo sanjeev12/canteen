@@ -299,7 +299,7 @@ public class Server implements ServerInterface {
         try {
             DBConnection dbc = new DBConnection();
 
-            PreparedStatement pstmt = dbc.conn.prepareStatement("delete from orderlist where Name =?");
+            PreparedStatement pstmt = dbc.conn.prepareStatement("delete from orderlist where TableName =?");
             pstmt.setString(1, tableName);
             int i = pstmt.executeUpdate();
             return i;
