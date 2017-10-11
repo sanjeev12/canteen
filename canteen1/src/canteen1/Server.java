@@ -9,8 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-public class Server implements ServerInterface 
-{
+
+public class Server implements ServerInterface {
 
     List<table> tblList;
     table tbl;
@@ -177,15 +177,17 @@ public class Server implements ServerInterface
     }
 
     @Override
-    public int delItem(Item itm) {
+    public int delItem(String itmName) {
         try {
             DBConnection dbc = new DBConnection();
 
             PreparedStatement pstmt = dbc.conn.prepareStatement("delete from orderitemlist where Name =?");
-            pstmt.setString(1, txttable.getText());
+            pstmt.setString(1, itmName);
             int i = pstmt.executeUpdate();
-        } catch (Exception e) {
+            return 1;
+        } catch (SQLException e) {
             System.out.println("error on del" + e);
+            return 0;
         }
     }
 
@@ -210,37 +212,101 @@ public class Server implements ServerInterface
 
     @Override
     public List<OrderList> getAllOrder() {
-
+        odr = null;
+        odrList.clear();
+        try {
+            DBConnection dbc = new DBConnection();
+            PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderlist");
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                odr.setOrderList(rs.getString(6), rs.getString(2), null, rs.getInt(3), rs.getInt(4));
+                odr.setId(rs.getInt(1));
+                odrList.add(odr);
+            }
+            return odrList;
+        } catch (SQLException ex) {
+            System.out.println("error on loadorderlist");
+            return null;
+        }
     }
 
     @Override
     public int addOrder(OrderList odr) {
+        try {
 
+            DBConnection dbc = new DBConnection();
+            PreparedStatement pstmt = dbc.conn.prepareStatement("Insert into orderlist values (null,?,?,?,?,?)");
+            pstmt.setString(1, odr.getItemName());
+            pstmt.setInt(2, odr.getItemRate());
+            pstmt.setInt(3, odr.getOderQuantity());
+            pstmt.setInt(4, odr.getItemRate() * odr.getOderQuantity());
+            pstmt.setString(5, odr.getTableName());
+
+            int rs = pstmt.executeUpdate();
+            System.out.println("Adding if order Successful");
+            return 1;
+
+        } catch (SQLException ex) {
+            System.out.println("error on add" + ex);
+            return 0;
+        }
     }
 
     @Override
     public int editOrder(OrderList odr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            DBConnection dbc = new DBConnection();
+            PreparedStatement pstmt = dbc.conn.prepareStatement("Update orderlist set Rate=?, Name =?, QTY=?, amount=?, TableName=?   where SN=? ");
+            pstmt.setInt(1, odr.getItemRate());
+            pstmt.setString(2, odr.getItemName());
+            pstmt.setInt(3, odr.getOderQuantity());
+            pstmt.setInt(4, odr.getItemRate() * odr.getOderQuantity());
+            pstmt.setString(5, odr.getTableName());
+            int rs = pstmt.executeUpdate();
+            System.out.println("successfully updated order" + rs);
+            return 1;
+
+        } catch (SQLException ex) {
+            System.out.println("error on loadorderlist" + ex);
+            return 0;
+        }
     }
 
     @Override
-    public int delOrder(OrderList odr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public List<OrderList> getOrderList(String tableName) {
+        odrList.clear();
+        odr = null;
+        try {
+            DBConnection dbc = new DBConnection();
+            PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderlist where TableName =?");
+            pstmt.setString(1, tableName);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                odr.setOrderList(rs.getString(6), rs.getString(2), null, rs.getInt(3), rs.getInt(4));
+                odr.setId(rs.getInt(1));
+                odrList.add(odr);
+            }
+            return odrList;
 
-    @Override
-    public OrderList getOrderList(String tableName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int delItem(String itmName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        } catch (NumberFormatException | SQLException ex) {
+            System.out.println("error on loadorderlist");
+            return null;
+        }
     }
 
     @Override
     public int delOrder(String tableName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            DBConnection dbc = new DBConnection();
+
+            PreparedStatement pstmt = dbc.conn.prepareStatement("delete from orderlist where Name =?");
+            pstmt.setString(1, tableName);
+            int i = pstmt.executeUpdate();
+            return i;
+        } catch (SQLException e) {
+            System.out.println("error on del" + e);
+            return 0;
+        }
     }
 
 }

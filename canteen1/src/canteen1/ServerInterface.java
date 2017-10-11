@@ -29,7 +29,7 @@ public interface ServerInterface extends Remote{
      int addOrder(OrderList odr);
      int editOrder(OrderList odr);
      int delOrder(String tableName);
-     OrderList getOrderList(String tableName);
+     List<OrderList> getOrderList(String tableName);
      
     
 }

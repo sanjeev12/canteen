@@ -18,7 +18,11 @@ public class OrderList extends Item {
         this.odrQuantity = itemQuantity;
         super.setItem(itemCode, itemName, rate);
     }
-
+    public void setOrderList(String tableName, String itemName, String itemCode, int rate, int itemQuantity) {
+        this.tableName = tableName;
+        this.odrQuantity = itemQuantity;
+        super.setItem(itemCode, itemName, rate);
+    }
     public void setOderQuantity(int odrQuantity) {
         this.odrQuantity = odrQuantity;
     }
@@ -27,14 +31,6 @@ public class OrderList extends Item {
         return odrQuantity;
     }
     
-    public void setItemQuantity(int itemQuantity) {
-        this.odrQuantity = itemQuantity;
-    }
-
-    public int getItemQuantity() {
-        return odrQuantity;
-    }
-
     public String getTableName() {
         return tableName;
     }
