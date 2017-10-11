@@ -31,5 +31,6 @@ public interface ServerInterface extends Remote{
      int delOrder(String tableName);
      List<OrderList> getOrderList(String tableName);
      
+     boolean login(String username,String password);
     
 }

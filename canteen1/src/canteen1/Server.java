@@ -309,4 +309,25 @@ public class Server implements ServerInterface {
         }
     }
 
+    @Override
+    public boolean login(String username, String password) {
+        try {
+
+            DBConnection db = new DBConnection();
+            PreparedStatement pstmt = db.conn.prepareStatement("select * from tbl_login where Username=? AND Password=?");
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return true;//success login
+            } else {
+                //unsuccess Login
+                return false;
+            }
+        } catch (Exception ex) {
+            System.out.println("error");
+            return false;
+        }
+    }
+
 }
