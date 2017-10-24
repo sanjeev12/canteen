@@ -1,15 +1,21 @@
 package client;
+
 import canteen1.*;
 
 import java.awt.Color;
 import java.awt.*;
 import java.awt.event.*;
+import java.rmi.Naming;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.ListIterator;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
+import java.util.List;
 public class MainWindow extends JFrame implements ActionListener, MouseListener {
 
     JMenu menu, itmmenu;
@@ -23,26 +29,37 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
     JTextField txtDiscount, txtDamount, txtTotal;
     JPopupMenu popmenu1, popmenu2;
     JButton btnReserve, btnAdditm, btnPaid;
+    final String ServerAddress = "//localhost/canteenserv";
+
+    List<table> tblList;
+    table tbl;
+    Item itm;
+    java.util.List<Item> itmList;
+    OrderList odr;
+    java.util.List<OrderList> odrList;
 
     void databaseinit() {
         try {
-            DBConnection dbc = new DBConnection();
-            PreparedStatement pstmt = dbc.conn.prepareStatement("select * from tableinfo");
-            ResultSet rs = pstmt.executeQuery();
-            model1.setRowCount(0);
-            model3.setRowCount(0);
-            while (rs.next()) {
-                model1.addRow(new Object[]{rs.getString(1), rs.getString(3), "Free"});
-            }
-            pstmt = dbc.conn.prepareStatement("select * from orderitemlist");
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                model3.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3)});
-            }
-            table1.changeSelection(0, 0, false, false);
-            table3.changeSelection(0, 0, false, false);
+            System.out.println("asdfasdf");
+            
+            ServerInterface SR = (ServerInterface) Naming.lookup("//localhost/canteenserv");
+            SR.getAllTable();
+            System.out.println("Table database fetch complete");
+//            model1.setRowCount(0);
+//            model3.setRowCount(0);
+//            //add table name on table
+//            for (table temp : tblList) {
+//                model1.addRow(new Object[]{temp.getTblId(), temp.getTblName(), "Free"});
+//            }
+//            itmList = SR.getAllItem();
+//            //fetch all item list
+//            for (Item itm : itmList) {
+//                model3.addRow(new Object[]{itm.getId(), itm.getItemName(), itm.getItemRate()});
+//            }
+//            table1.changeSelection(0, 0, false, false);
+//            table3.changeSelection(0, 0, false, false);
         } catch (Exception ex) {
-
+            System.out.println("error database init: " + ex);
         }
     }
 
@@ -102,7 +119,6 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
         itmmenu.add(itmAdd);
         itmmenu.add(itmEdit);
         itmmenu.add(itmDel);
-        
 
 //        popmenu1.add(tblAdd);
 //        popmenu1.add(tblEdit);
@@ -111,9 +127,8 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
 //        popmenu2.add(itmAdd);
 //        popmenu2.add(itmEdit);
 //        popmenu2.add(itmDel);
-
         setJMenuBar(menubar);
-        
+
         setLayout(null);
         add(panel1);
         panel1.setBackground(Color.red);

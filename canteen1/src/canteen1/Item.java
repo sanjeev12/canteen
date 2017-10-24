@@ -3,18 +3,18 @@ package canteen1;
 public class Item {
 
     private String itmName, itmCode;
-    private int itmRate,id;
+    private int itmRate, id;
 
     Item() {
     }
 
-    Item(String itmCode, String itmName, int itmRate) {
+    public Item(String itmCode, String itmName, int itmRate) {
         this.itmCode = itmCode;
         this.itmName = itmName;
         this.itmRate = itmRate;
     }
-    
-    void setItem(String itmCode, String itmName, int itmRate) {
+
+    public void setItem(String itmCode, String itmName, int itmRate) {
         this.itmCode = itmCode;
         this.itmName = itmName;
         this.itmRate = itmRate;
@@ -28,15 +28,15 @@ public class Item {
         return id;
     }
 
-    String getItemCode() {
+    public String getItemCode() {
         return itmCode;
     }
 
-    String getItemName() {
+    public String getItemName() {
         return itmName;
     }
 
-    int getItemRate() {
+    public int getItemRate() {
         return itmRate;
     }
 
@@ -51,6 +51,5 @@ public class Item {
     public void setItemRate(int itmRate) {
         this.itmRate = itmRate;
     }
-    
 
 }
