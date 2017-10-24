@@ -46,6 +46,7 @@ public class Login extends JFrame implements ActionListener {
         add(btnLogin);
         btnLogin.setBounds(20, 110, 100, 20);
 
+        this.getRootPane().setDefaultButton(btnLogin);
         btnLogin.addActionListener(this);
 
     }
@@ -65,22 +66,32 @@ public class Login extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == btnLogin) {
-            try {
-                ServerInterface SR = (ServerInterface) Naming.lookup(serverUrl);
-                if (SR.login(txtUsername.getText().trim(), txtPassword.getText())) {
-                    //login success
-                    JOptionPane.showMessageDialog(this, "Login Success");
-                } else {
-                    JOptionPane.showMessageDialog(this, "Login Failed");
-                }
+            String username = txtUsername.getText().trim();
+            String pass = txtPassword.getText();
+            if (username.isEmpty() && pass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Username and Password cannot be blank");
+            } else {
+                try {
+                    ServerInterface SR = (ServerInterface) Naming.lookup("//localhost/canteenserv");
+                    if (SR.login(txtUsername.getText().trim(), txtPassword.getText())) {
+                        //login success
+                        JOptionPane.showMessageDialog(this, "Login Success");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Login Failed");
+                    }
 
-            } catch (Exception ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
+
     public static void main(String[] args) {
+
         new Login();
     }
+
+ 
 
 }

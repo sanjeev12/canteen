@@ -5,12 +5,16 @@
  */
 package canteen1;
 
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Server implements ServerInterface {
+public class Server extends UnicastRemoteObject implements ServerInterface {
 
     List<table> tblList;
     table tbl;
@@ -18,6 +22,11 @@ public class Server implements ServerInterface {
     List<Item> itmList;
     OrderList odr;
     List<OrderList> odrList;
+    
+    public Server()throws RemoteException
+    {
+        super();
+    }
 
     @Override
     public List<table> getAllTable() {
@@ -204,7 +213,7 @@ public class Server implements ServerInterface {
             }
             return itm;
 
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             System.out.println("error on loadorderlist");
             return null;
         }
@@ -312,9 +321,10 @@ public class Server implements ServerInterface {
     @Override
     public boolean login(String username, String password) {
         try {
+            System.out.println(username+ " "+password);
 
             DBConnection db = new DBConnection();
-            PreparedStatement pstmt = db.conn.prepareStatement("select * from tbl_login where Username=? AND Password=?");
+            PreparedStatement pstmt = db.conn.prepareStatement("select * from logindb where Username=? AND Password=?");
             pstmt.setString(1, username);
             pstmt.setString(2, password);
             ResultSet rs = pstmt.executeQuery();
@@ -324,10 +334,20 @@ public class Server implements ServerInterface {
                 //unsuccess Login
                 return false;
             }
-        } catch (Exception ex) {
-            System.out.println("error");
+        } catch (SQLException ex) {
+            System.out.println("error "+ex);
             return false;
         }
     }
 
+    
+    public static void main(String[] args) throws RemoteException {
+        try {
+            Registry r = LocateRegistry.createRegistry(1099);
+            r.rebind("canteenserv", new Server());
+            System.out.println("server registered");
+        } catch (RemoteException e) {
+            System.out.println("error " + e);
+        }
+    }
 }
