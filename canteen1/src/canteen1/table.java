@@ -5,26 +5,26 @@ public class table {
     private String tblName, tblCode;
     private int tblId,tblSize;
 
-    table() {
+    public table() {
 
     }
 
-    table(String tblName, String tblCode) {
+    public table(String tblName, String tblCode) {
         this.tblName = tblName;
         this.tblCode = tblCode;
     }
 
-    void setTable(String tblName, String tblCode,int tblSize) {
+    public void setTable(String tblName, String tblCode,int tblSize) {
         this.tblName = tblName;
         this.tblCode = tblCode;
         this.tblSize=tblSize;
     }
 
-    String getTableName() {
+    public String getTableName() {
         return tblName;
     }
 
-    String getTableCode() {
+    public String getTableCode() {
         return this.tblCode;
     }
 
