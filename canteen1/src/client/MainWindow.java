@@ -61,6 +61,7 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
 //            }
 //            table1.changeSelection(0, 0, false, false);
 //            table3.changeSelection(0, 0, false, false);
+
         } catch (Exception ex) {
             System.out.println("error database init: " + ex);
         }
@@ -236,19 +237,22 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
         model2.setRowCount(0);
         try {
 
-            DBConnection dbc = new DBConnection();
-            PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderlist where TableName =?");
-            pstmt.setString(1, model1.getValueAt(table1.getSelectedRow(), 1).toString());
-            System.out.println(model1.getValueAt(table1.getSelectedRow(), 1).toString());
-            ResultSet rs = pstmt.executeQuery();
+//            DBConnection dbc = new DBConnection();
+//            PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderlist where TableName =?");
+//            pstmt.setString(1, model1.getValueAt(table1.getSelectedRow(), 1).toString());
+//            System.out.println(model1.getValueAt(table1.getSelectedRow(), 1).toString());
+//            ResultSet rs = pstmt.executeQuery();
+            //fetch orderlist
+            ServerInterface SR = (ServerInterface) Naming.lookup("//localhost/canteenserv");
+            odrList = SR.getOrderList(model1.getValueAt(table1.getSelectedRow(), 1).toString());
             int i = 1, sum = 0;
-            while (rs.next()) {
-                model2.addRow(new Object[]{i++, rs.getString(2), rs.getString(3), rs.getString(4), Integer.parseInt(rs.getString(3)) * Integer.parseInt(rs.getString(4))});
-                sum = sum + Integer.parseInt(rs.getString(3)) * Integer.parseInt(rs.getString(4));
+            for (OrderList temp : odrList) {
+                model2.addRow(new Object[]{i++, temp.getItemName(), temp.getItemRate(), temp.getOderQuantity(), temp.getItemRate() * temp.getOderQuantity()});
+                sum = sum + temp.getItemRate() * temp.getOderQuantity();
             }
             txtTotal.setText("" + sum);
         } catch (Exception ex) {
-            System.out.println("error on loadorderlist");
+            System.out.println("error on loadorderlist "+ex);
         }
 
     }
@@ -256,13 +260,21 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
     void deleteorderlist() {
         String tableName = model1.getValueAt(table1.getSelectedRow(), 1).toString();
         try {
-            DBConnection dbc = new DBConnection();
-
-            PreparedStatement pstmt = dbc.conn.prepareStatement("delete from orderlist where TableName =?");
-            pstmt.setString(1, tableName);
-            int i = pstmt.executeUpdate();
+//            DBConnection dbc = new DBConnection();
+//            PreparedStatement pstmt = dbc.conn.prepareStatement("delete from orderlist where TableName =?");
+//            pstmt.setString(1, tableName);
+//            int i = pstmt.executeUpdate();
+            ServerInterface SR = (ServerInterface) Naming.lookup(ServerAddress);
+            if(SR.delOrder(tableName)==1)
+            {
+                System.out.println("Successfully Deleted orderlist");
+            }
+            else    
+            {
+                System.out.println("Deletion Unsuccessful");
+            }
         } catch (Exception e) {
-
+            System.out.println("Error on delete orderlist "+e);
         }
 
     }
@@ -276,6 +288,8 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
             pstmt.setString(1, tableName);
             pstmt.setString(2, txtTotal.getText());
             int i = pstmt.executeUpdate();
+//            ServerInterface SR = (ServerInterface) Naming.lookup(ServerAddress);
+//            SR.addOrder(odr)
         } catch (Exception e) {
             System.out.println("error on addreport: " + e);
         }
@@ -289,30 +303,43 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
         int amount = rate * quantity;
         String tableName = model1.getValueAt(table1.getSelectedRow(), 1).toString();
         System.out.println(name + rate + quantity + amount + tableName);
+        //create odr object
+        OrderList odr = new OrderList(tableName, name, "", rate, quantity);
         try {
-            DBConnection dbc = new DBConnection();
-
-            PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderlist where TableName =? and Name=?");
-            pstmt.setString(1, tableName);
-            pstmt.setString(2, name);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.first()) {
-
-                pstmt = dbc.conn.prepareStatement("UPDATE orderlist SET QTY=? where Name=?");
-                quantity = Integer.parseInt(rs.getString(4)) + 1;
-                System.out.println("here" + quantity);
-                pstmt.setString(1, Integer.toString(quantity));
-                pstmt.setString(2, name);
-                int a = pstmt.executeUpdate();
+//            DBConnection dbc = new DBConnection();
+//
+//            PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderlist where TableName =? and Name=?");
+//            pstmt.setString(1, tableName);
+//            pstmt.setString(2, name);
+//            ResultSet rs = pstmt.executeQuery();
+            //fetch matched orderlist
+            odrList=new ArrayList<>();
+            ServerInterface SR = (ServerInterface) Naming.lookup(ServerAddress);
+            odrList=SR.getOrderList(tableName);
+            if (!odrList.isEmpty()) {
+                for(OrderList temp:odrList)
+                    if (temp.getItemName()==name) {
+                        SR.editOrder(odr);
+                    }
+                
+//                pstmt = dbc.conn.prepareStatement("UPDATE orderlist SET QTY=? where Name=?");
+//                quantity = Integer.parseInt(rs.getString(4)) + 1;
+//                System.out.println("here" + quantity);
+//                pstmt.setString(1, Integer.toString(quantity));
+//                pstmt.setString(2, name);
+//                int a = pstmt.executeUpdate();
             } else {
-                System.out.println("there");
-                pstmt = dbc.conn.prepareStatement("insert into orderlist values (null,?,?,?,?,?)");
-                pstmt.setString(1, name);
-                pstmt.setString(2, Integer.toString(rate));
-                pstmt.setString(3, Integer.toString(quantity));
-                pstmt.setString(4, Integer.toString(amount));
-                pstmt.setString(5, tableName);
-                int i = pstmt.executeUpdate();
+                SR.addOrder(odr);
+                
+                
+//                System.out.println("there");
+//                pstmt = dbc.conn.prepareStatement("insert into orderlist values (null,?,?,?,?,?)");
+//                pstmt.setString(1, name);
+//                pstmt.setString(2, Integer.toString(rate));
+//                pstmt.setString(3, Integer.toString(quantity));
+//                pstmt.setString(4, Integer.toString(amount));
+//                pstmt.setString(5, tableName);
+//                int i = pstmt.executeUpdate();
             }
         } catch (Exception e) {
             System.out.println("error on addorderlist: " + e);
