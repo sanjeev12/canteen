@@ -12,16 +12,17 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Server extends UnicastRemoteObject implements ServerInterface {
 
-    List<table> tblList;
+    List<table> tblList=new ArrayList<>();
     table tbl;
     Item itm;
-    List<Item> itmList;
+    List<Item> itmList = new ArrayList<>();
     OrderList odr;
-    List<OrderList> odrList;
+    List<OrderList> odrList = new ArrayList<>();
     
     public Server()throws RemoteException
     {
@@ -30,9 +31,10 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
     @Override
     public List<table> getAllTable() {
+       // if(!tblList.isEmpty())
         tblList.clear();
-        tbl = null;
-
+        tbl=new table();
+        System.out.println("init");
         try {
 
             DBConnection dbc = new DBConnection();
@@ -46,6 +48,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
         } catch (NumberFormatException | SQLException ex) {
             System.out.println("error on table info fetch all" + ex);
         }
+        System.out.println(tblList.get(1).getTableName());
         return tblList;
     }
 
@@ -342,6 +345,8 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
     
     public static void main(String[] args) throws RemoteException {
+//        Server jjj= new Server();
+//        jjj.getAllTable();
         try {
             Registry r = LocateRegistry.createRegistry(1099);
             r.rebind("canteenserv", new Server());

@@ -16,6 +16,7 @@ import java.util.ListIterator;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.util.List;
+
 public class MainWindow extends JFrame implements ActionListener, MouseListener {
 
     JMenu menu, itmmenu;
@@ -31,7 +32,7 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
     JButton btnReserve, btnAdditm, btnPaid;
     final String ServerAddress = "//localhost/canteenserv";
 
-    List<table> tblList;
+    List<table> tblList = new ArrayList<>();
     table tbl;
     Item itm;
     java.util.List<Item> itmList;
@@ -41,9 +42,11 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
     void databaseinit() {
         try {
             System.out.println("asdfasdf");
-            
+
             ServerInterface SR = (ServerInterface) Naming.lookup("//localhost/canteenserv");
-            SR.getAllTable();
+            System.out.println("asdfasdf1");
+
+            tblList.addAll(SR.getAllTable());
             System.out.println("Table database fetch complete");
 //            model1.setRowCount(0);
 //            model3.setRowCount(0);
