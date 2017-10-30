@@ -43,21 +43,23 @@ public class MainWindow extends JFrame implements ActionListener, MouseListener 
             System.out.println("asdfasdf");
             
             ServerInterface SR = (ServerInterface) Naming.lookup("//localhost/canteenserv");
-            SR.getAllTable();
+            tblList=SR.getAllTable();
             System.out.println("Table database fetch complete");
-//            model1.setRowCount(0);
-//            model3.setRowCount(0);
-//            //add table name on table
-//            for (table temp : tblList) {
-//                model1.addRow(new Object[]{temp.getTblId(), temp.getTblName(), "Free"});
-//            }
-//            itmList = SR.getAllItem();
-//            //fetch all item list
-//            for (Item itm : itmList) {
-//                model3.addRow(new Object[]{itm.getId(), itm.getItemName(), itm.getItemRate()});
-//            }
-//            table1.changeSelection(0, 0, false, false);
-//            table3.changeSelection(0, 0, false, false);
+            model1.setRowCount(0);
+            model3.setRowCount(0);
+            //add table name on table
+            for (table temp : tblList) {
+                model1.addRow(new Object[]{temp.getTblId(), temp.getTblName(), "Free"});
+                
+            }
+            itmList = SR.getAllItem();
+            
+            //fetch all item list
+            for (Item itm : itmList) {
+                model3.addRow(new Object[]{itm.getId(), itm.getItemName(), itm.getItemRate()});
+            }
+            table1.changeSelection(0, 0, false, false);
+            table3.changeSelection(0, 0, false, false);
         } catch (Exception ex) {
             System.out.println("error database init: " + ex);
         }

@@ -1,6 +1,8 @@
 package canteen1;
 
-public class table {
+import java.io.Serializable;
+
+public class table implements Serializable {
 
     private String tblName, tblCode;
     private int tblId,tblSize;

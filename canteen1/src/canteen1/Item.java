@@ -1,6 +1,8 @@
 package canteen1;
 
-public class Item {
+import java.io.Serializable;
+
+public class Item implements Serializable{
 
     private String itmName, itmCode;
     private int itmRate, id;

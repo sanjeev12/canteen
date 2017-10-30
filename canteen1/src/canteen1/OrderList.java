@@ -1,7 +1,10 @@
 package canteen1;
 //class order list 
 
-public class OrderList extends Item {
+import java.io.Serializable;
+
+
+public class OrderList extends Item implements Serializable{
 
     private String tableName;
     private int odrQuantity,id;

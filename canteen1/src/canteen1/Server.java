@@ -12,26 +12,28 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Server extends UnicastRemoteObject implements ServerInterface {
 
-    List<table> tblList;
-    table tbl;
-    Item itm;
-    List<Item> itmList;
-    OrderList odr;
-    List<OrderList> odrList;
-    
-    public Server()throws RemoteException
-    {
-        super();
+    List<table> tblList = new ArrayList<>();
+//    table tbl = new table();
+//    Item itm = new Item();
+    List<Item> itmList = new ArrayList<>();
+//    OrderList odr = new OrderList();
+    List<OrderList> odrList = new ArrayList<>();
+
+    public Server() throws RemoteException {
+        super(1099);
     }
 
     @Override
     public List<table> getAllTable() {
-        tblList.clear();
-        tbl = null;
+        if (!tblList.isEmpty()) {
+            tblList.clear();
+        }
+//        tbl = null;
 
         try {
 
@@ -39,9 +41,11 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
             PreparedStatement pstmt = dbc.conn.prepareStatement("select * from tableinfo");
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
+                table tbl = new table();
                 tbl.setTable(rs.getString(3), rs.getString(4), Integer.parseUnsignedInt(rs.getString(2)));
                 tbl.setTblId(Integer.parseInt(rs.getString(1)));
                 tblList.add(tbl);
+               
             }
         } catch (NumberFormatException | SQLException ex) {
             System.out.println("error on table info fetch all" + ex);
@@ -107,7 +111,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
     @Override
     public table getTable(String tableName) {
-        tbl = null;
+        table tbl = new table();
         try {
             DBConnection dbc = new DBConnection();
             PreparedStatement pstmt = dbc.conn.prepareStatement("select * from tableinfo where TableName =?");
@@ -127,13 +131,16 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
     @Override
     public List<Item> getAllItem() {
-        itm = null;
-        itmList.clear();
+
+        if (!itmList.isEmpty()) {
+            itmList.clear();
+        }
         try {
             DBConnection dbc = new DBConnection();
             PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderitemlist");
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
+                Item itm = new Item();
                 itm.setItem(rs.getString(1), rs.getString(2), rs.getInt(3));
                 itm.setId(rs.getInt(1));
                 itmList.add(itm);
@@ -207,6 +214,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
             PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderitemlist where Name =?");
             pstmt.setString(1, itmName);
             ResultSet rs = pstmt.executeQuery();
+            Item itm = new Item();
             while (rs.next()) {
                 itm.setItem(rs.getString(2), rs.getString(3), rs.getInt(4));
                 itm.setId(1);
@@ -221,13 +229,16 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
     @Override
     public List<OrderList> getAllOrder() {
-        odr = null;
-        odrList.clear();
+//        odr = null;
+        if (!odrList.isEmpty()) {
+            odrList.clear();
+        }
         try {
             DBConnection dbc = new DBConnection();
             PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderlist");
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
+                OrderList odr = new OrderList();
                 odr.setOrderList(rs.getString(6), rs.getString(2), null, rs.getInt(3), rs.getInt(4));
                 odr.setId(rs.getInt(1));
                 odrList.add(odr);
@@ -284,7 +295,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
     @Override
     public List<OrderList> getOrderList(String tableName) {
         odrList.clear();
-        odr = null;
+        OrderList  odr = new OrderList();
         try {
             DBConnection dbc = new DBConnection();
             PreparedStatement pstmt = dbc.conn.prepareStatement("select * from orderlist where TableName =?");
@@ -321,7 +332,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
     @Override
     public boolean login(String username, String password) {
         try {
-            System.out.println(username+ " "+password);
+            System.out.println(username + " " + password);
 
             DBConnection db = new DBConnection();
             PreparedStatement pstmt = db.conn.prepareStatement("select * from logindb where Username=? AND Password=?");
@@ -335,13 +346,15 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
                 return false;
             }
         } catch (SQLException ex) {
-            System.out.println("error "+ex);
+            System.out.println("error " + ex);
             return false;
         }
     }
 
-    
     public static void main(String[] args) throws RemoteException {
+
+//        List<table> allTable = s.getAllTable();
+//        new Server().getAllTable();
         try {
             Registry r = LocateRegistry.createRegistry(1099);
             r.rebind("canteenserv", new Server());
